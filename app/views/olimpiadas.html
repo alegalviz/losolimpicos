@@ -1,0 +1,76 @@
+<div class="col-sm-12 col-sm-push-2" style="padding:0;">
+    <div class="col-sm-2 form-inline" style="margin-bottom:1em;">
+        <label for="aniodesde">Desde</label>
+        <select class="form-control" id="aniodesde" ng-model="aniodesde" ng-options="anio.numero for anio in anios" ng-change="filter()">
+            <option value="">-- Elegir a&ntilde;o --</option>
+        </select>
+        <!-- <div class="small">Eleg&iacute; un a&ntildeos de inicio</div> -->
+    </div>
+    <div class="col-sm-2 form-inline">
+        <label for="aniohasta">Hasta:</label>
+        <select class="form-control" id="aniohasta" ng-model="aniohasta"
+                ng-options="anio.numero for anio in anios" ng-change="filter()" >
+            <option value="">-- Elegir a&ntilde;o --</option>
+        </select>
+        <!-- <div class="small">Eleg&iacute; un a&ntildeos de fin</div>-->
+    </div>
+</div>
+<div ng-repeat="form in forms" class="col-sm-12 formulariopais">
+    <div class="col-sm-2">
+        <div class="metaDatosPais" ng-if="olimpiadas[miPais]['participaciones']">
+            <div><span class="tituloPais">{{miPais}}</span></div>
+            <div><img src="images/banderas/{{olimpiadas[miPais]['abreviacion']}}.png"></div>
+            <div class="participacionesPais"><strong>Participaciones:</strong>
+                {{getLength(olimpiadas[miPais]['participaciones'])}} de 30</div>
+            <div class="descripcionPais">{{olimpiadas[miPais]['descripcion']}}</div>
+        </div>
+        <div class="selectorPais">
+            <select class="form-control" ng-model="miPais" ng-options="pais for pais in paises">
+                <option value="">-- Elegir pa&iacute;s --</option>
+            </select>
+            <!-- <small>Eleg&iacute; un pa&iacute;s para ver sus estad&iacute;sticas</small> -->
+        </div>
+    </div>
+    <div class="col-sm-10 flexcontainer">
+        <div class="pais rotador col-sm-12">
+            <slick slides-to-show=4 slides-to-scroll=4 dots="true" infinite="false" responsive="breakpoints" ng-if="miPais && aniosLoaded">
+                <div ng-repeat="anio in anios | filtroPorAnio:aniodesde:aniohasta"
+                    class="flex-item" >
+                    <div class="anio">
+                        <div ng-if="olimpiadas[miPais]['participaciones'][anio.numero]">
+                            <div class="barras hombremujer">
+                                <chartist id="barras{{$index}}" style="height: 100%;" class="ct-chart"
+                                          chartist-data="barData[miPais][anio.numero]"
+                                          chartist-chart-type="Bar" chartist-chart-options="barOptions"
+                                          chartist-events="barEvents"></chartist>
+                            </div>
+                            <div class="barras deportes">
+                                <chartist id="barrasdeportes{{$index}}" class="ct-chart"
+                                          chartist-data="barDeportesData[miPais][anio.numero]"
+                                          chartist-chart-type="Bar" chartist-chart-options="barDeportesOptions"
+                                          chartist-events="barDeportesEvents"></chartist>
+                            </div>
+                            <div class="medallas">
+                                <ul>
+                                    <li class="oro" title="Medallas de oro">{{olimpiadas[miPais]["participaciones"][anio
+                                        .numero]["Oro"]}}</li>
+                                    <li class="plata" title="Medallas de plata">{{olimpiadas[miPais]["participaciones"][anio
+                                        .numero]["Plata"]}}</li>
+                                    <li class="bronce" title="Medallas de bronce">{{olimpiadas[miPais]["participaciones"][anio
+                                        .numero]["Bronce"]}}</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div ng-if="!olimpiadas[miPais]['participaciones'][anio.numero]" class="centro">
+                            <h4>No particip&oacute;</h4>
+                        </div>
+                    </div>
+                    <div class="anionumero centro bold">{{anio.numero}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-sm-12 agregarpais">
+    <button class="btn btn-primary" ng-click="addForm()">Agregar pa&iacute;s</button>
+</div>
